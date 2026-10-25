@@ -1,0 +1,8 @@
+[project]
+name = "planificador"
+version = "0.1.0"
+description = "Sistema de Planificación y Optimización de Recursos (SC-250)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
