@@ -35,4 +35,3 @@ pytest
 - `docs/`: documentación del proyecto (contratos, decisiones).
 - `datos/`: datos de ejemplo.
 
-Ver `CLAUDE.md` para las reglas y convenciones del proyecto.
