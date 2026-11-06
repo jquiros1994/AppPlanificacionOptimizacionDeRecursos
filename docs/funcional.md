@@ -7,10 +7,10 @@ Un llamador que luego edite una entidad seguirá editando el objeto del dominio.
 
 ## Ejecutar
 
-```powershell
+
 python -m planificador.funcional
 python -m pytest tests/test_funcional.py -q
-```
+
 
 La demostración muestra tres equivalencias y el costo de una entrada parcial de
 análisis. No presenta esa entrada como una planificación factible.

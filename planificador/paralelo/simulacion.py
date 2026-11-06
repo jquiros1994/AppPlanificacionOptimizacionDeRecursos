@@ -1,5 +1,3 @@
-"""Evaluador de muestra independiente de los algoritmos greedy y genético."""
-
 from datetime import timedelta
 from random import Random
 

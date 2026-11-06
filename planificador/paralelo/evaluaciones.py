@@ -1,5 +1,3 @@
-"""Comparación reproducible de evaluaciones independientes para RF-07."""
-
 from __future__ import annotations
 
 from collections.abc import Callable

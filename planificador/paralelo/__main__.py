@@ -1,5 +1,3 @@
-"""Comparación por consola con procesos compatibles con Windows."""
-
 import argparse
 from dataclasses import asdict
 import json

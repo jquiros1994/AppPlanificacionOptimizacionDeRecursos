@@ -1,5 +1,3 @@
-"""Demostración de equivalencias sin ejecutar los algoritmos de planificación."""
-
 import json
 
 from planificador.dominio import Asignacion, Intervalo, Planificacion

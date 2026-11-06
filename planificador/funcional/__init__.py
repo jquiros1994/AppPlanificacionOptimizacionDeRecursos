@@ -1,5 +1,3 @@
-"""Análisis funcional de escenarios y planificaciones."""
-
 from planificador.funcional.metricas import (
     agrupar_actividades_por_prioridad,
     agrupar_prioridad_imperativo,

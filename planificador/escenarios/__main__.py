@@ -1,5 +1,3 @@
-"""Demostración independiente: python -m planificador.escenarios."""
-
 import argparse
 import json
 from datetime import datetime

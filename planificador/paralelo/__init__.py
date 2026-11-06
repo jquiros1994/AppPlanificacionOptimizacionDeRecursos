@@ -1,5 +1,3 @@
-"""Ejecución secuencial y paralela de evaluaciones independientes."""
-
 from planificador.paralelo.evaluaciones import (
     ComparacionEjecuciones, ConfiguracionParalela, ResultadoEvaluacion,
     ResultadoModalidad, TrabajoEvaluacion, comparar_ejecuciones,

@@ -1,5 +1,3 @@
-"""Transformaciones sin modificación de las entradas para RF-06."""
-
 from __future__ import annotations
 
 from collections.abc import Iterable

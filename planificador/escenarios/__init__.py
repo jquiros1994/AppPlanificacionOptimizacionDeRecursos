@@ -1,5 +1,3 @@
-"""Generación de escenarios para las pruebas y experimentos del planificador."""
-
 from planificador.escenarios.generador import (
     ConfiguracionEscenario,
     EscenarioGenerado,

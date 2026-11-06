@@ -6,12 +6,10 @@ Los resultados conservan el orden de los trabajos, no el orden de finalización.
 
 ## Ejecutar
 
-```powershell
 python -m planificador.paralelo --tamano pequeno --evaluaciones 4 --procesos 2 --semilla 2026
 python -m planificador.paralelo --tamano mediano --evaluaciones 4 --procesos 2 --semilla 2026
 python -m planificador.paralelo --tamano grande --evaluaciones 4 --procesos 2 --semilla 2026
 python -m pytest tests/test_paralelo.py -q
-```
 
 `--detalle` incluye valores y fallos de cada evaluación. El JSON de salida se
 puede guardar para registrar mediciones reales, por ejemplo en PowerShell:
