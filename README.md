@@ -17,9 +17,33 @@ pip install -r requirements.txt
 
 ## Pruebas
 
+Todas las pruebas:
+
 ```powershell
-pytest
+python -m pytest
 ```
+
+Solo las del algoritmo inicial y el genético:
+
+```powershell
+python -m pytest tests/test_genetico.py -q
+```
+
+## Algoritmo inicial y genético
+
+Ejecuta el algoritmo inicial (greedy) y el genético sobre un escenario generado,
+y muestra la comparación y la evolución de la aptitud por generación:
+
+```powershell
+python -m planificador.algoritmos --tamano pequeno
+python -m planificador.algoritmos --tamano mediano --poblacion 40 --generaciones 80 --semilla 2027
+python -m planificador.algoritmos --tamano pequeno --detalle
+python -m planificador.algoritmos --tamano pequeno --json
+```
+
+`--detalle` muestra las asignaciones y los motivos de las actividades pendientes.
+`--json` imprime el resultado completo. Las demás opciones, la fórmula de aptitud
+y el funcionamiento están en [docs/genetico.md](docs/genetico.md).
 
 ## Estructura
 
