@@ -6,3 +6,10 @@ requires-python = ">=3.12"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["lento: pruebas de varios segundos; omitir con -m \"not lento\""]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]

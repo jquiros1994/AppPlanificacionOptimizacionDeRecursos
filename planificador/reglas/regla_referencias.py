@@ -28,7 +28,7 @@ class ReglaReferencias(Regla):
                     )
                 )
 
-            for recurso_id in asignacion.recursos_ids:
+            for recurso_id in sorted(asignacion.recursos_ids):
 
                 if recurso_id not in escenario.recursos:
                     incidencias.append(

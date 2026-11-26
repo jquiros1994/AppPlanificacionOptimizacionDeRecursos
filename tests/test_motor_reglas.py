@@ -610,7 +610,8 @@ def test_generar_reporte_factible():
     assert reporte["retrasos_por_actividad"] == {}
 
 
-def test_generar_reporte_no_factible():
+def test_generar_reporte_pendiente_sin_conflictos_es_factible():
+    """RF-03: una actividad sin asignar no es una restricción dura; se informa aparte."""
     from datetime import datetime, timedelta
 
     inicio = datetime(2026, 10, 28, 8, 0)
@@ -642,7 +643,9 @@ def test_generar_reporte_no_factible():
         escenario
     )
 
-    assert reporte["factible"] is False
+    assert reporte["factible"] is True
+    assert reporte["conflictos_duros"] == []
+    assert reporte["pendientes"] == ["A030"]
 
     assert any(
         incidencia.regla == "ACTIVIDAD_SIN_ASIGNACION"

@@ -50,7 +50,9 @@ Un cromosoma es una permutación de las actividades pendientes. Cada gen tiene
 Para cada actividad, en el orden del cromosoma:
 
 1. Si una dependencia todavía no se procesó, la actividad se pospone hasta que se procese.
-2. Si una dependencia quedó pendiente, la actividad también queda pendiente.
+   Si hay un ciclo de dependencias, se lanza `CicloDependenciaError` con la cadena.
+2. Si una dependencia quedó pendiente, fue cancelada o está asignada fuera del plan,
+   la actividad también queda pendiente, con su motivo.
 3. Se prueban instantes desde `max(inicio_permitido, fin de dependencias)`. Solo se
    prueban los instantes donde puede cambiar la factibilidad: inicios de ventanas
    de disponibilidad y fines de asignaciones ya hechas.
@@ -79,19 +81,42 @@ aptitud = costo
 
 - `costo`: Σ costo_hora × duración de cada recurso asignado.
 - `peso_retraso`: costo por hora del recurso más caro (mínimo 1).
-- `penalizacion_pendiente`: costo máximo de una actividad + `peso_retraso` × 4 × horas
-  máximas de retraso posibles + 1.
-- `penalizacion_conflicto`: 10 × `penalizacion_pendiente`.
+- `penalizacion_pendiente`: N × (costo máximo de una actividad + `peso_retraso` × 4 ×
+  horas máximas de retraso posibles) + 1, donde N es la cantidad de actividades.
+- `penalizacion_conflicto`: `penalizacion_pendiente` × (4 × N + 1).
 - Prioridad: BAJA = 1, MEDIA = 2, ALTA = 3, CRITICA = 4.
 
-**Por qué no favorece dejar actividades sin asignar:** la penalización por una
-actividad pendiente es mayor que el costo más el retraso máximo que esa actividad
-podría generar al asignarse. Por eso asignar una actividad siempre baja la aptitud.
+**Por qué no favorece dejar actividades sin asignar:** cada unidad de prioridad
+pendiente cuesta más que el costo y el retraso ponderado de *todas* las actividades
+juntas. Por eso la aptitud ordena las soluciones primero por la prioridad que queda
+pendiente y, a igual cobertura, por costo + retraso. Asignar una actividad más
+siempre mejora la aptitud, aunque retrase a otras o encarezca el plan.
 
-**Factibilidad:** una solución es factible cuando el motor de reglas no reporta
-incidencias, excepto `ACTIVIDAD_SIN_ASIGNACION`. Las actividades sin asignar se
-reportan aparte como pendientes, con su motivo. El valor de aptitud no reemplaza
-esta validación. El resultado final es el mejor individuo factible encontrado.
+Una versión anterior acotaba la penalización con el costo y el retraso de una sola
+actividad. No bastaba: con 10 recursos, una tarea BAJA que necesita los 10 retrasaba
+a 10 tareas CRÍTICAS, y dejarla pendiente obtenía mejor aptitud. Ese caso está en
+`tests/test_validacion.py::test_asignar_mas_siempre_mejora_aunque_retrase_a_otras`.
+
+Por la misma razón, un solo conflicto duro pesa más que dejar todas las actividades
+pendientes: un plan inválido nunca supera a uno válido.
+
+Consecuencia práctica: el genético puede subir el costo para asignar más
+actividades. En el escenario grande, con los parámetros por defecto, asigna 9
+actividades más que el inicial con un costo mayor. La comparación lo informa como
+un intercambio, no como un ahorro.
+
+**Factibilidad:** el veredicto lo emite solo el motor de reglas
+(`MotorReglas.validar`, que devuelve un `ResultadoValidacion`). Una solución es
+FACTIBLE cuando no tiene conflictos duros (RF-03). Las actividades pendientes sin
+asignar y los retrasos se informan aparte y no la invalidan. El algoritmo inicial, el
+genético, la simulación paralela y la validación usan ese mismo veredicto. El valor
+de aptitud no reemplaza esta validación. El resultado final es el mejor individuo
+factible encontrado.
+
+**Estados de las dependencias:** una dependencia COMPLETADA se da por cumplida. Una
+CANCELADA nunca termina, así que la sucesora queda pendiente con ese motivo. Una
+ASIGNADA fuera del plan tampoco permite programar la sucesora, porque no se conoce
+su hora de fin.
 
 ## Ciclo evolutivo
 

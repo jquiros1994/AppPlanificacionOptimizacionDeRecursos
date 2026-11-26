@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from planificador.dominio.asignacion import Asignacion
 from planificador.dominio.enums import EstadoActividad
 from planificador.dominio.escenario import Escenario
+from planificador.dominio.excepciones import CicloDependenciaError
 from planificador.dominio.intervalo import Intervalo
 from planificador.dominio.recurso import Recurso
 
@@ -103,17 +104,30 @@ class Decodificador:
                 faltantes[dependiente_id] -= 1
                 if faltantes[dependiente_id] == 0:
                     heapq.heappush(listas, (posicion[dependiente_id], dependiente_id))
+        if len(resultado) != len(orden):
+            # Sin esta comprobación, las actividades de un ciclo desaparecerían sin motivo.
+            # verificar_sin_ciclos lanza CicloDependenciaError con la cadena exacta.
+            self._escenario.verificar_sin_ciclos()
+            raise CicloDependenciaError(sorted(set(orden) - set(resultado)))
         return resultado
 
     def _motivo_por_dependencias(
         self, actividad_id: str, fines: dict[str, datetime], pendientes: dict[str, str],
     ) -> str | None:
+        """Mismo criterio que ReglaDependencias: COMPLETADA se cumple, CANCELADA nunca termina
+        y cualquier otra dependencia debe haberse programado en este plan."""
         for dependencia_id in sorted(self._escenario.actividades[actividad_id].dependencias):
             if dependencia_id in fines:
                 continue
-            dependencia = self._escenario.actividades[dependencia_id]
-            if dependencia_id in pendientes or dependencia.estado != EstadoActividad.COMPLETADA:
-                return f"la dependencia {dependencia_id} no tiene asignación"
+            estado = self._escenario.actividades[dependencia_id].estado
+            if estado == EstadoActividad.COMPLETADA:
+                continue
+            if estado == EstadoActividad.CANCELADA:
+                return f"la dependencia {dependencia_id} fue cancelada y no terminará"
+            if estado == EstadoActividad.ASIGNADA:
+                return (f"la dependencia {dependencia_id} está asignada fuera de esta "
+                        "planificación y no se conoce su hora de fin")
+            return f"la dependencia {dependencia_id} no tiene asignación"
         return None
 
     def _motivo_sin_horario(self, actividad_id: str) -> str:

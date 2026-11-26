@@ -96,7 +96,7 @@ class AlgoritmoGenetico:
         self._configuracion = configuracion
         self._base = AlgoritmoBase(escenario, horizonte)
         self._decodificador = Decodificador(escenario, horizonte)
-        self._evaluador = EvaluadorAptitud(escenario)
+        self._evaluador = EvaluadorAptitud(escenario, horizonte)
         self._limites = {
             aid: self._decodificador.cantidad_candidatos(aid)
             for aid in self._decodificador.actividades_ids
