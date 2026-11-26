@@ -1,6 +1,7 @@
 import argparse
 from dataclasses import asdict
 import json
+from pathlib import Path
 
 from planificador.dominio import ValidacionError
 from planificador.escenarios import ConfiguracionEscenario, generar_escenario
@@ -15,6 +16,7 @@ def main() -> None:
     parser.add_argument("--evaluaciones", type=int, default=4)
     parser.add_argument("--procesos", type=int, default=2)
     parser.add_argument("--detalle", action="store_true", help="Incluye resultados y fallos de cada evaluación")
+    parser.add_argument("--salida", help="Guarda el JSON en este archivo (UTF-8) en lugar de imprimirlo")
     args = parser.parse_args()
     try:
         generado = generar_escenario(ConfiguracionEscenario(tamano=args.tamano, semilla=args.semilla))
@@ -26,7 +28,13 @@ def main() -> None:
     if args.detalle:
         salida["secuencial"] = asdict(comparacion.secuencial)
         salida["paralelo"] = asdict(comparacion.paralelo)
-    print(json.dumps(salida, ensure_ascii=False, indent=2))
+    texto = json.dumps(salida, ensure_ascii=False, indent=2)
+    if args.salida:
+        # UTF-8 sin BOM, independiente de la consola (en PowerShell 5.1, '>' escribe UTF-16).
+        Path(args.salida).write_text(texto + "\n", encoding="utf-8")
+        print(f"Resultado guardado en {args.salida}")
+    else:
+        print(texto)
     if comparacion.aceleracion is None:
         raise SystemExit(1)
 

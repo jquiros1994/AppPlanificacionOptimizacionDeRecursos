@@ -12,10 +12,10 @@ python -m planificador.paralelo --tamano grande --evaluaciones 4 --procesos 2 --
 python -m pytest tests/test_paralelo.py -q
 
 `--detalle` incluye valores y fallos de cada evaluación. El JSON de salida se
-puede guardar para registrar mediciones reales, por ejemplo en PowerShell:
+puede guardar en UTF-8 con `--salida` para registrar mediciones reales:
 
 ```powershell
-python -m planificador.paralelo --tamano mediano --detalle > resultado_mediano.json
+python -m planificador.paralelo --tamano mediano --detalle --salida resultado_mediano.json
 ```
 
 La generación de datos queda fuera del tiempo medido. El tiempo de cada modalidad

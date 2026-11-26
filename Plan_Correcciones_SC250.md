@@ -127,6 +127,8 @@ Estas cifras deben mantenerse tras la Fase 1. Las del grande cambian y se regene
 | F0 | ✅ T0.1 y T0.3 listas. Falta T0.2: confirmar D5 y D6 y repartir responsables. |
 | F1 | ✅ T1.1 a T1.10 listas. Hay 183 pruebas y pasan en 3.12 y 3.14. Las cifras del Excel se mantienen. `docs/genetico.md` y el README están actualizados. |
 | Pendiente de F1 para F4 | `evaluar_genetico` todavía no recibe el horizonte (T4.3). |
+| F2 (rama `feature/validacion-dominio`) | ✅ T2.1 a T2.5 listas. 247 pruebas en 3.12 y 3.14. Las entidades validan al crearse **y al asignar un atributo**. `Escenario` edita de forma atómica, carga en cualquier orden con `desde_entidades` y detecta ciclos sin recursión. El generador produce los mismos datos. **D5 no se implementó** (unir ventanas): espera la confirmación del equipo. |
+| Adelantado de T4.6 | Opción `--salida` (JSON UTF-8) en las CLI de algoritmos y paralelo. |
 
 Cifras nuevas del grande (semilla 2026, valores por defecto) con la penalización corregida: el greedy da ₡2.798.250 · 2.560,5 h · 353 asignadas, y el genético ₡3.495.000 · 2.885,25 h · 362 asignadas.
 

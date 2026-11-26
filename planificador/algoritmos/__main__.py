@@ -1,5 +1,6 @@
 import argparse
 import json
+from pathlib import Path
 
 from planificador.algoritmos import AlgoritmoGenetico, ConfiguracionGenetica, ResultadoGenetico
 from planificador.dominio import ValidacionError
@@ -82,6 +83,7 @@ def main() -> None:
     parser.add_argument("--paciencia", type=_paciencia, default=15, help="Entero o 'no' para desactivarla")
     parser.add_argument("--detalle", action="store_true", help="Muestra asignaciones y pendientes")
     parser.add_argument("--json", action="store_true", help="Imprime el resultado completo en JSON")
+    parser.add_argument("--salida", help="Guarda el resultado completo en este archivo JSON (UTF-8)")
     args = parser.parse_args()
     try:
         generado = generar_escenario(ConfiguracionEscenario(tamano=args.tamano, semilla=args.semilla_escenario))
@@ -94,10 +96,18 @@ def main() -> None:
         resultado = AlgoritmoGenetico(generado.escenario, configuracion, generado.horizonte).ejecutar()
     except ValidacionError as error:
         parser.error(str(error))
-    if args.json:
+    if args.salida:
+        guardar_json(args.salida, resultado.resumen())
+        print(f"Resultado guardado en {args.salida}")
+    elif args.json:
         print(json.dumps(resultado.resumen(), ensure_ascii=False, indent=2))
     else:
         _imprimir(resultado, args.detalle)
+
+
+def guardar_json(ruta: str, datos: object) -> None:
+    """UTF-8 sin BOM, independiente de la consola (en PowerShell 5.1, '>' escribe UTF-16)."""
+    Path(ruta).write_text(json.dumps(datos, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

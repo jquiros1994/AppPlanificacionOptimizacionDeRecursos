@@ -259,10 +259,17 @@ def test_decodificador_acepta_dependencia_completada_y_el_motor_coincide():
     assert MotorReglas().validar(resultado.planificacion, escenario).factible
 
 
+def test_escenario_con_ciclo_se_rechaza_al_construirse():
+    with pytest.raises(CicloDependenciaError):
+        _escenario([_recurso()], [
+            _actividad("A001", dependencias={"A002"}), _actividad("A002", dependencias={"A001"}),
+        ])
+
+
 def test_decodificador_no_pierde_actividades_de_un_ciclo():
-    escenario = _escenario([_recurso()], [
-        _actividad("A001", dependencias={"A002"}), _actividad("A002", dependencias={"A001"}),
-    ])
+    escenario = _escenario([_recurso()], [_actividad("A001"), _actividad("A002", dependencias={"A001"})])
+    # Mutación directa de la actividad, sin pasar por Escenario.editar_actividad.
+    escenario.actividades["A001"].dependencias = frozenset({"A002"})
     with pytest.raises(CicloDependenciaError):
         Decodificador(escenario).decodificar([("A001", 0), ("A002", 0)])
 

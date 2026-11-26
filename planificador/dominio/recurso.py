@@ -3,15 +3,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from functools import partial
 
+from planificador.dominio import validaciones as v
 from planificador.dominio.enums import EstadoRecurso, TipoRecurso
-from planificador.dominio.excepciones import ValidacionError
 from planificador.dominio.intervalo import Intervalo
 
 
 @dataclass
-class Recurso:
-    """Recurso humano, de equipo o de unidad operativa asignable a actividades."""
+class Recurso(v.EntidadValidada):
+    """Recurso humano, de equipo o de unidad operativa asignable a actividades (RF-01).
+
+    Las validaciones se aplican al crear la instancia y en cada asignación posterior
+    de un atributo. Los tipos y estados aceptan el miembro del enum o su texto.
+    """
 
     id: str
     nombre: str
@@ -22,13 +27,19 @@ class Recurso:
     disponibilidad: tuple[Intervalo, ...]
     estado: EstadoRecurso = field(default=EstadoRecurso.ACTIVO)
 
+    _normalizadores = {
+        "id": partial(v.texto, "id"),
+        "nombre": partial(v.texto, "nombre"),
+        "tipo": partial(v.enumerado, TipoRecurso, "tipo"),
+        "capacidad": partial(v.entero_positivo, "capacidad"),
+        "costo_hora": partial(v.real_finito, "costo_hora"),
+        "habilidades": partial(v.conjunto_textos, "habilidades", vacio=False),
+        "disponibilidad": partial(v.tupla_de, Intervalo, "disponibilidad"),
+        "estado": partial(v.enumerado, EstadoRecurso, "estado"),
+    }
+
     def __post_init__(self) -> None:
-        if not isinstance(self.capacidad, int) or self.capacidad < 1:
-            raise ValidacionError("capacidad", "debe ser un entero mayor o igual a 1")
-        if self.costo_hora < 0:
-            raise ValidacionError("costo_hora", "no puede ser negativo")
-        if not self.habilidades:
-            raise ValidacionError("habilidades", "no puede estar vacío")
+        self._finalizar_validacion()
 
     def tiene_habilidades(self, requeridas: frozenset[str]) -> bool:
         """Indica si el recurso posee todas las habilidades requeridas."""
