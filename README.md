@@ -9,19 +9,35 @@ del curso Paradigmas de Programación (Universidad Fidélitas).
 
 ## Instalación
 
+Con [uv](https://docs.astral.sh/uv/) (recomendado). Usa la versión de `.python-version` (3.14):
+
+```powershell
+uv sync
+```
+
+Con pip, en cualquier Python 3.12 o superior:
+
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
+`requirements.txt` se genera desde `uv.lock` con
+`uv export --format requirements-txt --no-hashes --no-emit-project -o requirements.txt`.
+
 ## Pruebas
 
 Todas las pruebas:
 
 ```powershell
-python -m pytest
+uv run pytest                                   # o: python -m pytest
+uv run --isolated --python 3.12 pytest          # comprobar compatibilidad con 3.12
+uv run pytest -m "not lento"                    # omitir las pruebas de varios segundos
 ```
+
+`tests/test_regresion.py` fija las cifras registradas en `Resultados.xlsx`. Si un
+cambio las altera, debe ser intencional y quedar documentado.
 
 Solo las del algoritmo inicial y el genético:
 
