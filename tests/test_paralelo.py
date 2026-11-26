@@ -84,7 +84,8 @@ def test_simulacion_repite_plan_y_metricas_sin_modificar_entrada():
     assert escenario == original
     assert resultado["asignadas"] + resultado["pendientes"] == 20
     assert resultado["costo"] >= 0
-    assert resultado["factible_segun_motor"] == (not resultado["incidencias_por_regla"])
+    assert resultado["factible_segun_motor"] == (not resultado["violaciones_por_regla"])
+    assert "ACTIVIDAD_SIN_ASIGNACION" not in resultado["violaciones_por_regla"]
 
 
 @pytest.mark.parametrize("campos", [

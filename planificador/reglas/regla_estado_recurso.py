@@ -19,7 +19,7 @@ class ReglaEstadoRecurso(Regla):
 
         for asignacion in planificacion.asignaciones:
 
-            for recurso_id in asignacion.recursos_ids:
+            for recurso_id in sorted(asignacion.recursos_ids):
 
                 recurso = escenario.recursos.get(recurso_id)
 

@@ -26,7 +26,7 @@ class ReglaHabilidades(Regla):
             if actividad is None:
                 continue
 
-            for recurso_id in asignacion.recursos_ids:
+            for recurso_id in sorted(asignacion.recursos_ids):
 
                 recurso = escenario.recursos.get(recurso_id)
 

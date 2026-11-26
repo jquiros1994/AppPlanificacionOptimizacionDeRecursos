@@ -35,7 +35,7 @@ class AlgoritmoBase:
             raise ValidacionError("escenario", "no hay actividades pendientes")
         self._escenario = escenario
         self._decodificador = Decodificador(escenario, horizonte)
-        self._evaluador = EvaluadorAptitud(escenario)
+        self._evaluador = EvaluadorAptitud(escenario, horizonte)
 
     @staticmethod
     def orden(escenario: Escenario) -> tuple[str, ...]:

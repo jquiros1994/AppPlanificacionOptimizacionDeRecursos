@@ -41,17 +41,15 @@ def evaluar_muestra(escenario: Escenario, semilla: int) -> dict[str, object]:
             if colocado:
                 break
     plan = Planificacion(tuple(asignaciones), "muestra_aleatoria", semilla)
-    incidencias = MotorReglas().evaluar(plan, escenario)
-    reglas = sorted({incidencia.regla for incidencia in incidencias})
+    validacion = MotorReglas().validar(plan, escenario)
     return {
         "asignadas": len(asignaciones),
-        "pendientes": len(escenario.actividades) - len(asignaciones),
+        "pendientes": len(validacion.actividades_pendientes),
         "costo": calcular_costo_total(plan, escenario),
         "retraso_horas": sum(tareas_retrasadas(plan, escenario).values()),
-        "factible_segun_motor": not incidencias,
-        "incidencias_por_regla": {
-            regla: sum(i.regla == regla for i in incidencias) for regla in reglas
-        },
+        "factible_segun_motor": validacion.factible,
+        "incidencias_por_regla": validacion.por_regla(),
+        "violaciones_por_regla": validacion.por_regla(solo_duras=True),
         "asignaciones": tuple((
             a.actividad_id, tuple(sorted(a.recursos_ids)),
             a.intervalo.inicio.isoformat(), a.intervalo.fin.isoformat(),
