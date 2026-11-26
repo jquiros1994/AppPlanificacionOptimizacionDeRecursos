@@ -8,7 +8,7 @@ Implementa RF-04 y RF-05 en `planificador/algoritmos`.
 python -m planificador.algoritmos --tamano pequeno
 python -m planificador.algoritmos --tamano mediano --poblacion 40 --generaciones 80 --semilla 2027
 python -m planificador.algoritmos --tamano pequeno --detalle
-python -m planificador.algoritmos --tamano pequeno --json > resultado_genetico.json
+python -m planificador.algoritmos --tamano pequeno --salida resultado_genetico.json
 python -m pytest tests/test_genetico.py -q
 ```
 
