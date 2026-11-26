@@ -16,6 +16,12 @@ class Intervalo:
     fin: datetime
 
     def __post_init__(self) -> None:
+        for campo in ("inicio", "fin"):
+            valor = getattr(self, campo)
+            if not isinstance(valor, datetime):
+                raise ValidacionError(campo, "debe ser una fecha y hora")
+            if valor.tzinfo is not None:
+                raise ValidacionError(campo, "debe ser local, sin zona horaria")
         if self.inicio >= self.fin:
             raise ValidacionError("inicio", "debe ser anterior a fin")
 
